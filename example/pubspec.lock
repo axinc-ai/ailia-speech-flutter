@@ -10,6 +10,15 @@ packages:
       url: "https://github.com/axinc-ai/ailia-sdk-flutter.git"
     source: git
     version: "1.3.0"
+  ailia_audio:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: "9ad90b691d2bc15dae6f63c48d0bb1c7b0221a72"
+      url: "https://github.com/axinc-ai/ailia-audio-flutter.git"
+    source: git
+    version: "1.3.0"
   ailia_speech:
     dependency: "direct main"
     description:

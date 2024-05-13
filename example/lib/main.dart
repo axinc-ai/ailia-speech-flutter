@@ -56,7 +56,12 @@ class _MyAppState extends State<MyApp> {
           }
         }
 
+        print(wav.channels[0].length);
+        print(pcm);
+
         _ailiaSpeechModel.streamPush(pcm, wav.samplesPerSecond, wav.channels.length, _intermediateCallback);
+
+        _ailiaSpeechModel.streamFinalize();
 
         String transcribe_result = "";
 
@@ -64,8 +69,11 @@ class _MyAppState extends State<MyApp> {
         for (int i = 0; i < texts.length; i++){
           transcribe_result = transcribe_result + texts[i].text;
         }
+        
 
         _ailiaSpeechModel.close();
+
+        print("Sueccess");
 
         setState(() {
           _predictText = transcribe_result;
@@ -79,7 +87,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('ailia AI Speech Flutter Plugin Example'),
         ),
         body: Center(
           child: Text('Result : $_predictText\n'),
