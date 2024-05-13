@@ -2,8 +2,11 @@
 
 import 'dart:ffi' as ffi;
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:ffi/ffi.dart'; // malloc
 import 'package:ailia_speech/ailia_speech.dart' as ailia_speech_dart;
+import 'ailia_license.dart';
+import 'dart:convert';
 
 String _ailiaCommonGetPath() {
   if (Platform.isAndroid || Platform.isLinux) {
@@ -385,6 +388,20 @@ class AiliaSpeechModel {
     }
   }
 
+  String _pointerCharToString(ffi.Pointer<ffi.Char> pointer) {
+    var length = 0;
+    while (pointer.elementAt(length).value != 0) {
+      length++;
+    }
+
+    var buffer = Uint8List(length);
+    for (var i = 0; i < length; i++) {
+      buffer[i] = pointer.elementAt(i).value;
+    }
+
+    return utf8.decode(buffer);
+  }
+
   static Map<int, Function(String)> callbacks = {};
   static int classIdCounter = 0;
 
@@ -415,6 +432,11 @@ class AiliaSpeechModel {
     ailiaAudio = _ailiaCommonGetLibrary(_ailiaCommonGetAudioPath());
     ailia = _ailiaCommonGetLibrary(_ailiaCommonGetPath());
     ailiaTokenizer = _ailiaCommonGetLibrary(_ailiaCommonGetTokenizerPath());
+
+    var ailiaVersion = ailia_speech_dart.ailiaSpeechFFI(ailia!);
+    final ffi.Pointer<ffi.Char> version = ailiaVersion.ailiaGetVersion();
+    String versionString = _pointerCharToString(version);
+    AiliaLicense.checkAndDownloadLicense(versionString);
 
     ppAilia = malloc<ffi.Pointer<ailia_speech_dart.AILIASpeech>>();
 
@@ -451,40 +473,27 @@ class AiliaSpeechModel {
   void open(
     File encoder,
     File decoder,
-    File vad,
+    File? vad,
     String language,
-    String modelType,
-    bool vadEnable,
+    int modelType
   ) {
     classId = classIdCounter;
     classIdCounter++;
 
-    var modelTypeId = -1;
-    if (modelType == "Whisper Medium") {
-      modelTypeId =
-          ailia_speech_dart.AILIA_SPEECH_MODEL_TYPE_WHISPER_MULTILINGUAL_MEDIUM;
-    }
-    if (modelType == "Whisper Small") {
-      modelTypeId =
-          ailia_speech_dart.AILIA_SPEECH_MODEL_TYPE_WHISPER_MULTILINGUAL_SMALL;
-    }
-    if (modelTypeId == -1) {
-      throw ("Unknown model type");
-    }
     int status = 0;
     if (Platform.isWindows) {
       status = ailiaSpeech.ailiaSpeechOpenModelFileW(
         ppAilia!.value,
         encoder.path.toNativeUtf16().cast<ffi.Int16>(),
         decoder.path.toNativeUtf16().cast<ffi.Int16>(),
-        modelTypeId,
+        modelType,
       );
     } else {
       status = ailiaSpeech.ailiaSpeechOpenModelFileA(
         ppAilia!.value,
         encoder.path.toNativeUtf8().cast<ffi.Int8>(),
         decoder.path.toNativeUtf8().cast<ffi.Int8>(),
-        modelTypeId,
+        modelType,
       );
     }
     throwError("ailiaSpeechOpenModelFileA", status);
@@ -497,7 +506,7 @@ class AiliaSpeechModel {
       throwError("ailiaSpeechSetLanguage", status);
     }
 
-    if (vadEnable) {
+    if (vad != null) {
       if (Platform.isWindows) {
         status = ailiaSpeech.ailiaSpeechOpenVadFileW(
           ppAilia!.value,
@@ -536,7 +545,7 @@ class AiliaSpeechModel {
     }
     */
 
-    if (vadEnable) {
+    if (vad != null) {
       const double thresholdVad = 0.5;
       const double speechSec = 1.0;
       const double noSpeechSec = 1.0;

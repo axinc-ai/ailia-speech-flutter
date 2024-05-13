@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:wav/wav.dart';
 
 import 'package:flutter/services.dart';
-import 'package:ailia_speech/ailia_speech.dart';
+import 'package:ailia_speech/ailia_speech.dart' as ailia_speech_dart;
 import 'package:ailia_speech/ailia_speech_model.dart';
+
+import 'utils/download_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,37 +19,59 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  final _ailiaSpeechPlugin = AiliaSpeechModel();
+  final _ailiaSpeechModel = AiliaSpeechModel();
+  String _predictText = "Initializing...";
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    _ailiaSpeechTest();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    /*
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await _ailiaSpeechPlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
+  void _intermediateCallback(String text){
     setState(() {
-      _platformVersion = platformVersion;
+      _predictText = text;
     });
-    */
+}
+
+  void _ailiaSpeechTest() async{
+    // Load image
+    ByteData data = await rootBundle.load("assets/demo.wav");
+    final wav = await Wav.read(data.buffer.asUint8List());
+
+
+    print("Downloading model...");
+    downloadModel("https://storage.googleapis.com/ailia-models/whisper/encoder_tiny.opt3.onnx", "encoder_tiny.opt3.onnx", (onnx_encoder_file) {
+      downloadModel("https://storage.googleapis.com/ailia-models/whisper/decoder_tiny_fix_kv_cache.opt3.onnx", "decoder_tiny_fix_kv_cache.opt3.onnx", (onnx_decoder_file) {
+        print("Download model success");
+
+        _ailiaSpeechModel.create(false, false, ailia_speech_dart.AILIA_ENVIRONMENT_ID_AUTO);
+        _ailiaSpeechModel.open(onnx_encoder_file, onnx_decoder_file, null, "auto", ailia_speech_dart.AILIA_SPEECH_MODEL_TYPE_WHISPER_MULTILINGUAL_TINY);
+
+        List<double> pcm = List<double>.empty(growable: true);
+
+        for (int i = 0; i < wav.channels[0].length; ++i) {
+          for (int j = 0; j < wav.channels.length; ++j){
+            pcm.add(wav.channels[j][i]);
+          }
+        }
+
+        _ailiaSpeechModel.streamPush(pcm, wav.samplesPerSecond, wav.channels.length, _intermediateCallback);
+
+        String transcribe_result = "";
+
+        List<SpeechText> texts = _ailiaSpeechModel.streamTranscribeBatch();
+        for (int i = 0; i < texts.length; i++){
+          transcribe_result = transcribe_result + texts[i].text;
+        }
+
+        _ailiaSpeechModel.close();
+
+        setState(() {
+          _predictText = transcribe_result;
+        });
+      });
+    });
   }
 
   @override
@@ -58,7 +82,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Text('Result : $_predictText\n'),
         ),
       ),
     );
