@@ -414,6 +414,9 @@ class AiliaSpeechModel {
     ffi.Pointer<ffi.Char> text,
   ) {
     int refClassId = handle.address;
+    if (!callbacks.containsKey(refClassId)){
+      return 0;
+    }
     Function(String) callback = callbacks[refClassId]!;
     callback(text.cast<Utf8>().toDartString());
     return 0; // 1で中断
@@ -558,8 +561,6 @@ class AiliaSpeechModel {
       throwError("ailiaSpeechSetSilentThreshold", status);
     }
 
-    print("ailia Speech initialize success");
-
     available = true;
     postProcess = false;
   }
@@ -586,7 +587,6 @@ class AiliaSpeechModel {
           : ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_EN_JA,
     );
     throwError("ailiaSpeechOpenPostProcessFileA", status);
-    print("ailia Speech postprocess success");
     postProcess = true;
   }
 
@@ -599,8 +599,16 @@ class AiliaSpeechModel {
     available = false;
   }
 
+  // 途中の文字起こしの結果の通知を行うコールバックを設定する
+  void setIntermediateCallback(Function(String) callback){
+    if (!available) {
+      throw Exception("Model not opened yet. wait one second and try again.");
+    }
+    callbacks[classId] = callback;
+  }
+
   // 文字起こしを行うデータが存在するか
-  bool streamBuffered() {
+  bool isBuffered() {
     // Check enough pcm exists in queue
     final ffi.Pointer<ffi.UnsignedInt> buffered = malloc<ffi.UnsignedInt>();
     int status = ailiaSpeech.ailiaSpeechBuffered(ppAilia!.value, buffered);
@@ -614,7 +622,7 @@ class AiliaSpeechModel {
   }
 
   // 文字起こしを1回だけ実行する
-  List<SpeechText> streamTranscribe() {
+  List<SpeechText> transcribe() {
     List<SpeechText> result = [];
     // Process
     int status = ailiaSpeech.ailiaSpeechTranscribe(ppAilia!.value);
@@ -628,7 +636,6 @@ class AiliaSpeechModel {
     final ffi.Pointer<ffi.UnsignedInt> count = malloc<ffi.UnsignedInt>();
     status = ailiaSpeech.ailiaSpeechGetTextCount(ppAilia!.value, count);
     throwError("ailiaSpeechGetTextCount", status);
-    print("ailiaSpeechGetTextCount ${count.value}");
 
     for (int idx = 0; idx < count.value; idx++) {
       final ffi.Pointer<ailia_speech_dart.AILIASpeechText> text =
@@ -643,7 +650,6 @@ class AiliaSpeechModel {
 
       SpeechText s = SpeechText.fromPointer(text);
       result.add(s);
-      print("${text.ref.text} $s\n");
 
       malloc.free(text);
     }
@@ -652,17 +658,17 @@ class AiliaSpeechModel {
   }
 
   // 文字起こしをまとめて実行する
-  List<SpeechText> streamTranscribeBatch() {
+  List<SpeechText> transcribeBatch() {
     List<SpeechText> result = [];
-    while (streamBuffered()) {
-      List<SpeechText> newResult = streamTranscribe();
+    while (isBuffered()) {
+      List<SpeechText> newResult = transcribe();
       result.addAll(newResult);
     }
     return result;
   }
 
   // ストリームの終端かを確認する
-  bool streamComplete() {
+  bool isComplete() {
     final ffi.Pointer<ffi.UnsignedInt> completed = malloc<ffi.UnsignedInt>();
     int status = ailiaSpeech.ailiaSpeechComplete(ppAilia!.value, completed);
     throwError("ailiaSpeechComplete", status);
@@ -675,29 +681,19 @@ class AiliaSpeechModel {
   }
 
   // ストリームにPCMを投入する
-  void streamPush(
+  void pushInputData(
     List<double> pcm,
     int sampleRate,
-    int nChannels,
-    Function(String) callback,
+    int nChannels
   ) {
     if (!available) {
-      print("Model not opened");
       throw Exception("Model not opened yet. wait one second and try again.");
     }
-
-    //AiliaSpeechToText.callback = callback;
-    callbacks[classId] = callback;
-    //callback_member = callback;
-
-    //print("wave_buf");
 
     ffi.Pointer<ffi.Float> waveBuf = malloc<ffi.Float>(pcm.length);
     for (int i = 0; i < pcm.length; i++) {
       waveBuf[i] = pcm[i];
     }
-
-    //print("ailiaSpeechPushInputData");
 
     int status = 0;
     int pushSamples = pcm.length;
@@ -714,9 +710,8 @@ class AiliaSpeechModel {
   }
 
   // 終端であることを通知する
-  void streamFinalize() {
+  void finalizeInputData() {
     if (!available) {
-      print("Model not opened");
       throw Exception("Model not opened yet. wait one second and try again.");
     }
 
@@ -725,9 +720,8 @@ class AiliaSpeechModel {
   }
 
   // ストリームの終了処理を行う
-  void streamReset() {
+  void reset() {
     if (!available) {
-      print("Model not opened");
       throw Exception("Model not opened yet. wait one second and try again.");
     }
 

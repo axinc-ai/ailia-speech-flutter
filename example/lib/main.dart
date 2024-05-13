@@ -56,16 +56,14 @@ class _MyAppState extends State<MyApp> {
           }
         }
 
-        print(wav.channels[0].length);
-        print(pcm);
+        //_ailiaSpeechModel.setIntermediateCallback(_intermediateCallback);
+        _ailiaSpeechModel.pushInputData(pcm, wav.samplesPerSecond, wav.channels.length);
 
-        _ailiaSpeechModel.streamPush(pcm, wav.samplesPerSecond, wav.channels.length, _intermediateCallback);
-
-        _ailiaSpeechModel.streamFinalize();
+        _ailiaSpeechModel.finalizeInputData();
 
         String transcribe_result = "";
 
-        List<SpeechText> texts = _ailiaSpeechModel.streamTranscribeBatch();
+        List<SpeechText> texts = _ailiaSpeechModel.transcribeBatch();
         for (int i = 0; i < texts.length; i++){
           transcribe_result = transcribe_result + texts[i].text;
         }
