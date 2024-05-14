@@ -4,6 +4,7 @@ import 'package:wav/wav.dart';
 import 'package:flutter/services.dart';
 import 'package:ailia_speech/ailia_speech.dart' as ailia_speech_dart;
 import 'package:ailia_speech/ailia_speech_model.dart';
+import 'package:ailia/ailia_license.dart';
 
 import 'utils/download_model.dart';
 
@@ -35,10 +36,11 @@ class _MyAppState extends State<MyApp> {
 }
 
   void _ailiaSpeechTest() async{
+    await AiliaLicense.checkAndDownloadLicense();
+
     // Load image
     ByteData data = await rootBundle.load("assets/demo.wav");
     final wav = await Wav.read(data.buffer.asUint8List());
-
 
     print("Downloading model...");
     downloadModel("https://storage.googleapis.com/ailia-models/whisper/encoder_tiny.opt3.onnx", "encoder_tiny.opt3.onnx", (onnx_encoder_file) {

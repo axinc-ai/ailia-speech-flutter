@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart'; // malloc
 import 'package:ailia_speech/ailia_speech.dart' as ailia_speech_dart;
-import 'ailia_license.dart';
+import 'package:ailia/ailia_license.dart';
 import 'dart:convert';
 
 String _ailiaCommonGetPath() {
@@ -435,11 +435,6 @@ class AiliaSpeechModel {
     ailiaAudio = _ailiaCommonGetLibrary(_ailiaCommonGetAudioPath());
     ailia = _ailiaCommonGetLibrary(_ailiaCommonGetPath());
     ailiaTokenizer = _ailiaCommonGetLibrary(_ailiaCommonGetTokenizerPath());
-
-    var ailiaVersion = ailia_speech_dart.ailiaSpeechFFI(ailia!);
-    final ffi.Pointer<ffi.Char> version = ailiaVersion.ailiaGetVersion();
-    String versionString = _pointerCharToString(version);
-    AiliaLicense.checkAndDownloadLicense(versionString);
 
     ppAilia = malloc<ffi.Pointer<ailia_speech_dart.AILIASpeech>>();
 
