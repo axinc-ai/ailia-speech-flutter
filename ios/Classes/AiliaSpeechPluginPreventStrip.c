@@ -6,7 +6,7 @@
 
 // Dummy link to keep libailia_tokenizer.a from being deleted
 
-extern const char* AILIA_API ailiaSpeechGetErrorDetail(void* net);
+extern const char* ailiaSpeechGetErrorDetail(void* net);
 
 void test(void){
     ailiaSpeechGetErrorDetail(0);
