@@ -427,6 +427,7 @@ class AiliaSpeechModel {
     bool liveTranscribe,
     bool taskTranslate,
     int envId,
+    {bool virtualMemory = false}
   ) {
     ailiaSpeech = ailia_speech_dart.ailiaSpeechFFI(
       _ailiaCommonGetLibrary(_ailiaCommonGetSpeechPath()),
@@ -444,6 +445,12 @@ class AiliaSpeechModel {
     int memoryMode = ailia_speech_dart.AILIA_MEMORY_REDUCE_CONSTANT |
         ailia_speech_dart.AILIA_MEMORY_REDUCE_CONSTANT_WITH_INPUT_INITIALIZER |
         ailia_speech_dart.AILIA_MEMORY_REUSE_INTERSTAGE;
+    if (virtualMemory){
+        memoryMode = ailia_speech_dart.AILIA_MEMORY_REDUCE_CONSTANT |
+                ailia_speech_dart.AILIA_MEMORY_REDUCE_CONSTANT_WITH_INPUT_INITIALIZER |
+                ailia_speech_dart.AILIA_MEMORY_REUSE_INTERSTAGE |
+                ailia_speech_dart.AILIA_MEMORY_REDUCE_CONSTANT_WITH_FILE_MAPPED;
+    }
     int taskId = ailia_speech_dart.AILIA_SPEECH_TASK_TRANSCRIBE;
     if (taskTranslate) {
       taskId = ailia_speech_dart.AILIA_SPEECH_TASK_TRANSLATE;
