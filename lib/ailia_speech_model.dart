@@ -422,21 +422,6 @@ class AiliaSpeechModel {
     return 0; // 1で中断
   }
 
-  // 仮想メモリ用の一時ファイルのパスを設定する
-  void setTemporaryCachePath(String path){
-    int status = 0;
-    if (Platform.isWindows) {
-      status = ailiaSpeech.ailiaSetTemporaryCachePathW(
-        path.toNativeUtf16().cast<ffi.Int16>(),
-      );
-    } else {
-      status = ailiaSpeech.ailiaSetTemporaryCachePathA(
-        path.toNativeUtf8().cast<ffi.Int8>(),
-      );
-    }
-    throwError("ailiaSetTemporaryCachePath", status);
-  }
-
   // インスタンスを作成する
   void create(
     bool liveTranscribe,
