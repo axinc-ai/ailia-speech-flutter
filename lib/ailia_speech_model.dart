@@ -540,16 +540,6 @@ class AiliaSpeechModel {
     );
     throwError("ailiaSpeechSetIntermediateCallback", status);
 
-    /*
-    bool dictionary = (strcmp(option, "dictionary") == 0);
-    if (dictionary){
-      status = ailiaSpeechOpenDictionaryFileA(net, "dict.csv", AILIA_SPEECH_DICTIONARY_TYPE_REPLACE);
-      if (status != AILIA_STATUS_SUCCESS){
-        printf("ailiaSpeechOpenDictionaryFileA Error %d\n", status);
-      }
-    }
-    */
-
     if (vad != null) {
       const double thresholdVad = 0.5;
       const double speechSec = 1.0;
@@ -575,21 +565,62 @@ class AiliaSpeechModel {
     File target,
     bool jaEn,
   ) {
-    int status = ailiaSpeech.ailiaSpeechOpenPostProcessFileA(
-      ppAilia!.value,
-      encoder.path.toNativeUtf8().cast<ffi.Int8>(),
-      (decoder == null)
-          ? ffi.nullptr
-          : decoder.path.toNativeUtf8().cast<ffi.Int8>(),
-      source.path.toNativeUtf8().cast<ffi.Int8>(),
-      target.path.toNativeUtf8().cast<ffi.Int8>(),
-      ffi.nullptr,
-      (jaEn)
-          ? ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_JA_EN
-          : ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_EN_JA,
-    );
-    throwError("ailiaSpeechOpenPostProcessFileA", status);
+    int status = 0;
+    if (Platform.isWindows) {
+      status = ailiaSpeech.ailiaSpeechOpenPostProcessFileW(
+        ppAilia!.value,
+        encoder.path.toNativeUtf16().cast<ffi.Int16>(),
+        (decoder == null)
+            ? ffi.nullptr
+            : decoder.path.toNativeUtf16().cast<ffi.Int16>(),
+        source.path.toNativeUtf16().cast<ffi.Int16>(),
+        target.path.toNativeUtf16().cast<ffi.Int16>(),
+        ffi.nullptr,
+        (jaEn)
+            ? ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_JA_EN
+            : ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_EN_JA,
+      );
+      throwError("ailiaSpeechOpenPostProcessFileW", status);
+    }else{
+      status = ailiaSpeech.ailiaSpeechOpenPostProcessFileA(
+        ppAilia!.value,
+        encoder.path.toNativeUtf8().cast<ffi.Int8>(),
+        (decoder == null)
+            ? ffi.nullptr
+            : decoder.path.toNativeUtf8().cast<ffi.Int8>(),
+        source.path.toNativeUtf8().cast<ffi.Int8>(),
+        target.path.toNativeUtf8().cast<ffi.Int8>(),
+        ffi.nullptr,
+        (jaEn)
+            ? ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_JA_EN
+            : ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_EN_JA,
+      );
+      throwError("ailiaSpeechOpenPostProcessFileA", status);
+    }
     postProcess = true;
+  }
+
+  // 辞書を開く
+  void dictionary(
+    File dictionary,
+    {int dictionaryType = ailia_speech_dart.AILIA_SPEECH_DICTIONARY_TYPE_REPLACE}
+  ){
+    int status = 0;
+    if (Platform.isWindows) {
+      status = ailiaSpeech.ailiaSpeechOpenDictionaryFileW(
+        ppAilia!.value,
+        dictionary.path.toNativeUtf16().cast<ffi.Int16>(),
+        dictionaryType,
+      );
+      throwError("ailiaSpeechOpenDictionaryFileW", status);
+    }else{
+      status = ailiaSpeech.ailiaSpeechOpenDictionaryFileA(
+        ppAilia!.value,
+        dictionary.path.toNativeUtf8().cast<ffi.Int8>(),
+        dictionaryType,
+      );
+      throwError("ailiaSpeechOpenPostProcessFileA", status);
+    }
   }
 
   // モデルを閉じる
