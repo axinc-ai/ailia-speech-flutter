@@ -575,19 +575,36 @@ class AiliaSpeechModel {
     File target,
     bool jaEn,
   ) {
-    int status = ailiaSpeech.ailiaSpeechOpenPostProcessFileA(
-      ppAilia!.value,
-      encoder.path.toNativeUtf8().cast<ffi.Int8>(),
-      (decoder == null)
-          ? ffi.nullptr
-          : decoder.path.toNativeUtf8().cast<ffi.Int8>(),
-      source.path.toNativeUtf8().cast<ffi.Int8>(),
-      target.path.toNativeUtf8().cast<ffi.Int8>(),
-      ffi.nullptr,
-      (jaEn)
-          ? ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_JA_EN
-          : ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_EN_JA,
-    );
+    int status = 0;
+    if (Platform.isWindows) {
+      status = ailiaSpeech.ailiaSpeechOpenPostProcessFileW(
+        ppAilia!.value,
+        encoder.path.toNativeUtf16().cast<ffi.Int16>(),
+        (decoder == null)
+            ? ffi.nullptr
+            : decoder.path.toNativeUtf16().cast<ffi.Int16>(),
+        source.path.toNativeUtf16().cast<ffi.Int16>(),
+        target.path.toNativeUtf16().cast<ffi.Int16>(),
+        ffi.nullptr,
+        (jaEn)
+            ? ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_JA_EN
+            : ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_EN_JA,
+      );
+    }else{
+      status = ailiaSpeech.ailiaSpeechOpenPostProcessFileA(
+        ppAilia!.value,
+        encoder.path.toNativeUtf8().cast<ffi.Int8>(),
+        (decoder == null)
+            ? ffi.nullptr
+            : decoder.path.toNativeUtf8().cast<ffi.Int8>(),
+        source.path.toNativeUtf8().cast<ffi.Int8>(),
+        target.path.toNativeUtf8().cast<ffi.Int8>(),
+        ffi.nullptr,
+        (jaEn)
+            ? ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_JA_EN
+            : ailia_speech_dart.AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_EN_JA,
+      );
+    }
     throwError("ailiaSpeechOpenPostProcessFileA", status);
     postProcess = true;
   }
