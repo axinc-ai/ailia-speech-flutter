@@ -602,21 +602,22 @@ class AiliaSpeechModel {
 
   // 辞書を開く
   void dictionary(
-    File dictionary
+    File dictionary,
+    {int dictionaryType = ailia_speech_dart.AILIA_SPEECH_DICTIONARY_TYPE_REPLACE}
   ){
     int status = 0;
     if (Platform.isWindows) {
       status = ailiaSpeech.ailiaSpeechOpenDictionaryFileW(
         ppAilia!.value,
         dictionary.path.toNativeUtf16().cast<ffi.Int16>(),
-        ailia_speech_dart.AILIA_SPEECH_DICTIONARY_TYPE_REPLACE
+        dictionaryType,
       );
       throwError("ailiaSpeechOpenDictionaryFileW", status);
     }else{
       status = ailiaSpeech.ailiaSpeechOpenDictionaryFileA(
         ppAilia!.value,
         dictionary.path.toNativeUtf8().cast<ffi.Int8>(),
-        ailia_speech_dart.AILIA_SPEECH_DICTIONARY_TYPE_REPLACE
+        dictionaryType,
       );
       throwError("ailiaSpeechOpenPostProcessFileA", status);
     }
