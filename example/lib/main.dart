@@ -49,6 +49,12 @@ class _MyAppState extends State<MyApp> {
     byteData.lengthInBytes));
   }
 
+  void progressCallback(String file, int size) {
+      setState(() {
+        _predictText = "Downloading ${file} ${size / 1024} KB";
+      });
+  }
+
   void _ailiaSpeechTest() async{
     await AiliaLicense.checkAndDownloadLicense();
 
@@ -60,41 +66,48 @@ class _MyAppState extends State<MyApp> {
     File dict = await copyFileFromAssets("dict.csv");
 
     print("Downloading model...");
-    downloadModel("https://storage.googleapis.com/ailia-models/whisper/encoder_tiny.opt3.onnx", "encoder_tiny.opt3.onnx", (onnx_encoder_file) {
-      downloadModel("https://storage.googleapis.com/ailia-models/whisper/decoder_tiny_fix_kv_cache.opt3.onnx", "decoder_tiny_fix_kv_cache.opt3.onnx", (onnx_decoder_file) {
-        print("Download model success");
+    downloadModel("https://storage.googleapis.com/ailia-models/whisper/encoder_tiny.opt3.onnx", "encoder_tiny.opt3.onnx", progressCallback, (onnx_encoder_file) {
+      downloadModel("https://storage.googleapis.com/ailia-models/whisper/decoder_tiny_fix_kv_cache.opt3.onnx", "decoder_tiny_fix_kv_cache.opt3.onnx", progressCallback, (onnx_decoder_file) {
+        downloadModel("https://storage.googleapis.com/ailia-models/silero-vad/silero_vad.onnx", "silero_vad.onnx", progressCallback, (onnx_vad_file) {
+          downloadModel("https://storage.googleapis.com/ailia-models/pyannote-audio/segmentation.onnx", "segmentation.onnx", progressCallback, (onnx_segmentation_file) {
+            downloadModel("https://storage.googleapis.com/ailia-models/pyannote-audio/speaker-embedding.onnx", "speaker-embedding.onnx", progressCallback, (onnx_embedding_gile) {
+              print("Download model success");
 
-        _ailiaSpeechModel.create(false, false, ailia_speech_dart.AILIA_ENVIRONMENT_ID_AUTO);
-        _ailiaSpeechModel.open(onnx_encoder_file, onnx_decoder_file, null, "auto", ailia_speech_dart.AILIA_SPEECH_MODEL_TYPE_WHISPER_MULTILINGUAL_TINY);
-        _ailiaSpeechModel.dictionary(dict); // optional
+              _ailiaSpeechModel.create(false, false, ailia_speech_dart.AILIA_ENVIRONMENT_ID_AUTO);
+              // onnx_vad_file is optional
+              _ailiaSpeechModel.open(onnx_encoder_file, onnx_decoder_file, onnx_vad_file, "auto", ailia_speech_dart.AILIA_SPEECH_MODEL_TYPE_WHISPER_MULTILINGUAL_TINY);
+              _ailiaSpeechModel.diarization(onnx_segmentation_file, onnx_embedding_gile); // optional
+              _ailiaSpeechModel.dictionary(dict); // optional
 
-        List<double> pcm = List<double>.empty(growable: true);
+              List<double> pcm = List<double>.empty(growable: true);
 
-        for (int i = 0; i < wav.channels[0].length; ++i) {
-          for (int j = 0; j < wav.channels.length; ++j){
-            pcm.add(wav.channels[j][i]);
-          }
-        }
+              for (int i = 0; i < wav.channels[0].length; ++i) {
+                for (int j = 0; j < wav.channels.length; ++j){
+                  pcm.add(wav.channels[j][i]);
+                }
+              }
 
-        //_ailiaSpeechModel.setIntermediateCallback(_intermediateCallback);
-        _ailiaSpeechModel.pushInputData(pcm, wav.samplesPerSecond, wav.channels.length);
+              //_ailiaSpeechModel.setIntermediateCallback(_intermediateCallback);
+              _ailiaSpeechModel.pushInputData(pcm, wav.samplesPerSecond, wav.channels.length);
 
-        _ailiaSpeechModel.finalizeInputData();
+              _ailiaSpeechModel.finalizeInputData();
 
-        String transcribe_result = "";
+              String transcribe_result = "";
 
-        List<SpeechText> texts = _ailiaSpeechModel.transcribeBatch();
-        for (int i = 0; i < texts.length; i++){
-          transcribe_result = transcribe_result + texts[i].text;
-        }
-        
+              List<SpeechText> texts = _ailiaSpeechModel.transcribeBatch();
+              for (int i = 0; i < texts.length; i++){
+                transcribe_result = transcribe_result + "\n" + texts[i].timeStampBegin + " - " + texts[i].timeStampEnd + " Speaker." + texts[i].personId + " " + texts[i].text;
+              }
 
-        _ailiaSpeechModel.close();
+              _ailiaSpeechModel.close();
 
-        print("Sueccess");
+              print("Sueccess");
 
-        setState(() {
-          _predictText = transcribe_result;
+              setState(() {
+                _predictText = transcribe_result;
+              });
+            });
+          });
         });
       });
     });
