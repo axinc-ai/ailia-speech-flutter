@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
                 if (texts[i].personId == ailia_speech_dart.AILIA_SPEECH_TEXT_PERSON_ID_UNKNOWN) {
                   speakerId = "UNK";
                 }
-                transcribe_result = transcribe_result + "\n" + texts[i].timeStampBegin + " - " + texts[i].timeStampEnd + " Speaker." + speakerId + " " + texts[i].text;
+                transcribe_result = transcribe_result + "\n${texts[i].timeStampBegin} - ${texts[i].timeStampEnd} Speaker.${speakerId} " + texts[i].text;
               }
 
               _ailiaSpeechModel.close();
