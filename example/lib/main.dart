@@ -96,7 +96,11 @@ class _MyAppState extends State<MyApp> {
 
               List<SpeechText> texts = _ailiaSpeechModel.transcribeBatch();
               for (int i = 0; i < texts.length; i++){
-                transcribe_result = transcribe_result + "\n" + texts[i].timeStampBegin + " - " + texts[i].timeStampEnd + " Speaker." + texts[i].personId + " " + texts[i].text;
+                String speakerId = "${texts[i].personId}";
+                if (texts[i].personId == ailia_speech_dart.AILIA_SPEECH_TEXT_PERSON_ID_UNKNOWN) {
+                  speakerId = "UNK";
+                }
+                transcribe_result = transcribe_result + "\n" + texts[i].timeStampBegin + " - " + texts[i].timeStampEnd + " Speaker." + speakerId + " " + texts[i].text;
               }
 
               _ailiaSpeechModel.close();
