@@ -4320,7 +4320,7 @@ final class _AILIASpeechText extends ffi.Struct {
   external double time_stamp_end;
 
   @ffi.UnsignedInt()
-  external int person_id;
+  external int speaker_id;
 
   external ffi.Pointer<ffi.Char> language;
 
@@ -4619,4 +4619,4 @@ const int AILIA_SPEECH_API_CALLBACK_VERSION = 6;
 
 const int AILIA_SPEECH_TEXT_VERSION = 2;
 
-const int AILIA_SPEECH_TEXT_PERSON_ID_UNKNOWN = 4294967295;
+const int AILIA_SPEECH_SPEAKER_ID_UNKNOWN = 4294967295;
