@@ -92,7 +92,7 @@ class SpeechText {
     String s = p.toDartString();
     return SpeechText(
       s,
-      text.ref.person_id,
+      text.ref.speaker_id,
       text.ref.confidence,
       text.ref.time_stamp_begin,
       text.ref.time_stamp_end,
@@ -800,7 +800,7 @@ class AiliaSpeechModel {
     inputTextStruct.ref.text = inputText.toNativeUtf8().cast<ffi.Char>();
     inputTextStruct.ref.time_stamp_begin = 0.0;
     inputTextStruct.ref.time_stamp_end = 0.0;
-    inputTextStruct.ref.person_id = 0;
+    inputTextStruct.ref.speaker_id = 0;
     inputTextStruct.ref.language = language.toNativeUtf8().cast<ffi.Char>();
 
     int status = ailiaSpeech.ailiaSpeechSetText(
