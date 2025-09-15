@@ -30,6 +30,7 @@ Future<String> getModelPath(String path) async {
 void downloadModel(
   String url,
   String filename,
+  Function progressCallback,
   Function downloadCallback
 ) async {
   var filePath = await getModelPath(filename);
@@ -64,9 +65,7 @@ void downloadModel(
 
     r.stream.listen(
       (List<int> chunk) {
-        final speed = 0;//getDownloadSpeed(bytes: downloaded, stopwatch: stopwatch);
-
-        //progressCallback(filename, speed, chunk.length);
+        progressCallback(filename, downloaded);
 
         if (!hasIOError) {
           tempFileSink.add(chunk);
@@ -77,7 +76,6 @@ void downloadModel(
       },
       onDone: () async {
         stopwatch.stop();
-        final speed = 0;//getDownloadSpeed(bytes: downloaded, stopwatch: stopwatch);
 
         await tempFileSink.close();
 
@@ -100,7 +98,7 @@ void downloadModel(
           throw Exception("$filename : ${e.toString()}");
         }
 
-        //progressCallback(filename, speed, 0);
+        progressCallback(filename, 0);
       
         downloadCallback(File(filePath));
       },

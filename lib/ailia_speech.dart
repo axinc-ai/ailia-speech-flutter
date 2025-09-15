@@ -2178,6 +2178,59 @@ class ailiaSpeechFFI {
           int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.WChar>)>();
 
   /// \~japanese
+  /// @brief マージファイルを読み込みます。
+  /// @param net トークナイザオブジェクトポインタへのポインタ
+  /// @param path マージファイルのパス
+  /// @return
+  /// 成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+  /// @details
+  /// マージファイルを読み込みます。AILIA_TOKENIZER_TYPE_ROBERTAの場合のみ必要です。
+  ///
+  /// \~english
+  /// @brief Open merges file.
+  /// @param net A pointer to the tokenizer instance pointer
+  /// @param path Path for merges file
+  /// @return
+  /// If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+  /// @details
+  /// Open a vocab file. This API only requires for AILIA_TOKENIZER_TYPE_ROBERTA.
+  int ailiaTokenizerOpenMergeFileA(
+    ffi.Pointer<AILIATokenizer> net,
+    ffi.Pointer<ffi.Char> path,
+  ) {
+    return _ailiaTokenizerOpenMergeFileA(
+      net,
+      path,
+    );
+  }
+
+  late final _ailiaTokenizerOpenMergeFileAPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<AILIATokenizer>,
+              ffi.Pointer<ffi.Char>)>>('ailiaTokenizerOpenMergeFileA');
+  late final _ailiaTokenizerOpenMergeFileA =
+      _ailiaTokenizerOpenMergeFileAPtr.asFunction<
+          int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>)>();
+
+  int ailiaTokenizerOpenMergeFileW(
+    ffi.Pointer<AILIATokenizer> net,
+    ffi.Pointer<ffi.WChar> path,
+  ) {
+    return _ailiaTokenizerOpenMergeFileW(
+      net,
+      path,
+    );
+  }
+
+  late final _ailiaTokenizerOpenMergeFileWPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<AILIATokenizer>,
+              ffi.Pointer<ffi.WChar>)>>('ailiaTokenizerOpenMergeFileW');
+  late final _ailiaTokenizerOpenMergeFileW =
+      _ailiaTokenizerOpenMergeFileWPtr.asFunction<
+          int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.WChar>)>();
+
+  /// \~japanese
   /// @brief エンコードを行います。
   /// @param net トークナイザオブジェクトポインタ
   /// @param text エンコードするテキスト(UTF8)
@@ -2255,7 +2308,7 @@ class ailiaSpeechFFI {
   /// ailiaTokenizerEncode() を一度も実行していない場合は \ref AILIA_STATUS_INVALID_STATE が返ります。
   ///
   /// \~english
-  /// @brief Gets the detection results.
+  /// @brief Gets the tokens.
   /// @param net   A tokenizer instance pointer
   /// @param tokens Token
   /// @param count  Token count
@@ -2290,7 +2343,8 @@ class ailiaSpeechFFI {
   /// @return
   /// 成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
   /// @details
-  /// 認識した結果はailiaTokenizerGetText APIで取得します。
+  /// デコードした結果はailiaTokenizerGetText APIで取得します。
+  /// skip_special_tokens=Trueと同様に、Special Tokenは出力しません。
   ///
   /// \~english
   /// @brief Perform encode
@@ -2301,6 +2355,7 @@ class ailiaSpeechFFI {
   /// If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
   /// @details
   /// Get the decoded result with ailiaTokenizerGetText API.
+  /// Similarly to skip_special_tokens=True, special tokens will not be output.
   int ailiaTokenizerDecode(
     ffi.Pointer<AILIATokenizer> net,
     ffi.Pointer<ffi.Int> tokens,
@@ -2906,6 +2961,92 @@ class ailiaSpeechFFI {
               ffi.Pointer<ffi.WChar>,
               ffi.Pointer<ffi.Char>,
               int)>();
+
+  /// \~japanese
+  /// @brief 話者分離に適用するAIモデルを指定します。(MBSC)
+  /// @param net ネットワークオブジェクトポインタ
+  /// @param segmentation_path onnxファイルのパス名(MBSC)
+  /// @param embedding_path onnxファイルのパス名(MBSC)
+  /// @param type AILIA_SPEECH_DIARIZATION_TYPE_PYANNOTE_AUDIO
+  /// @return
+  /// 成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+  ///
+  /// \~english
+  /// @brief Set AI model for speaker diarization (MBSC)
+  /// @param net A network instance pointer
+  /// @param segmentation_path The path name to the onnx file (MBSC)
+  /// @param embedding_path The path name to the onnx file (MBSC)
+  /// @param type AILIA_SPEECH_DIARIZATION_TYPE_PYANNOTE_AUDIO
+  /// @return
+  /// If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+  int ailiaSpeechOpenDiarizationFileA(
+    ffi.Pointer<AILIASpeech> net,
+    ffi.Pointer<ffi.Char> segmentation_path,
+    ffi.Pointer<ffi.Char> embedding_path,
+    int type,
+  ) {
+    return _ailiaSpeechOpenDiarizationFileA(
+      net,
+      segmentation_path,
+      embedding_path,
+      type,
+    );
+  }
+
+  late final _ailiaSpeechOpenDiarizationFileAPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<AILIASpeech>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Int)>>('ailiaSpeechOpenDiarizationFileA');
+  late final _ailiaSpeechOpenDiarizationFileA =
+      _ailiaSpeechOpenDiarizationFileAPtr.asFunction<
+          int Function(ffi.Pointer<AILIASpeech>, ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>, int)>();
+
+  /// \~japanese
+  /// @brief 話者分離に適用するAIモデルを指定します。(UTF16)
+  /// @param net ネットワークオブジェクトポインタ
+  /// @param segmentation_path onnxファイルのパス名(UTF16)
+  /// @param embedding_path onnxファイルのパス名(UTF16)
+  /// @param type AILIA_SPEECH_DIARIZATION_TYPE_PYANNOTE_AUDIO
+  /// @return
+  /// 成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+  ///
+  /// \~english
+  /// @brief Set AI model for speaker diarization (UTF16)
+  /// @param net A network instance pointer
+  /// @param segmentation_path The path name to the onnx file (UTF16)
+  /// @param embedding_path The path name to the onnx file (UTF16)
+  /// @param type AILIA_SPEECH_DIARIZATION_TYPE_PYANNOTE_AUDIO
+  /// @return
+  /// If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+  int ailiaSpeechOpenDiarizationFileW(
+    ffi.Pointer<AILIASpeech> net,
+    ffi.Pointer<ffi.WChar> segmentation_path,
+    ffi.Pointer<ffi.WChar> embedding_path,
+    int type,
+  ) {
+    return _ailiaSpeechOpenDiarizationFileW(
+      net,
+      segmentation_path,
+      embedding_path,
+      type,
+    );
+  }
+
+  late final _ailiaSpeechOpenDiarizationFileWPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<AILIASpeech>,
+              ffi.Pointer<ffi.WChar>,
+              ffi.Pointer<ffi.WChar>,
+              ffi.Int)>>('ailiaSpeechOpenDiarizationFileW');
+  late final _ailiaSpeechOpenDiarizationFileW =
+      _ailiaSpeechOpenDiarizationFileWPtr.asFunction<
+          int Function(ffi.Pointer<AILIASpeech>, ffi.Pointer<ffi.WChar>,
+              ffi.Pointer<ffi.WChar>, int)>();
 
   /// \~japanese
   /// @brief 音声をキューに投入します。
@@ -3630,8 +3771,10 @@ final class _ailiaFileCallback extends ffi.Struct {
 /// @return
 /// This function returns a user-defined file pointer if successful.
 /// It returns NULL if it fails.
-typedef AILIA_USER_API_FOPEN = ffi.Pointer<
-    ffi.NativeFunction<ffi.Pointer<ffi.Void> Function(ffi.Pointer<ffi.Void>)>>;
+typedef AILIA_USER_API_FOPEN
+    = ffi.Pointer<ffi.NativeFunction<AILIA_USER_API_FOPENFunction>>;
+typedef AILIA_USER_API_FOPENFunction = ffi.Pointer<ffi.Void> Function(
+    ffi.Pointer<ffi.Void>);
 
 /// \~japanese
 /// @brief ファイルをシークします
@@ -3648,8 +3791,12 @@ typedef AILIA_USER_API_FOPEN = ffi.Pointer<
 /// @return
 /// This function returns  \ref AILIA_USER_API_SUCCESS  if successful.
 /// It returns  \ref AILIA_USER_API_FAILED  if it fails.
-typedef AILIA_USER_API_FSEEK = ffi.Pointer<
-    ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.LongLong)>>;
+typedef AILIA_USER_API_FSEEK
+    = ffi.Pointer<ffi.NativeFunction<AILIA_USER_API_FSEEKFunction>>;
+typedef AILIA_USER_API_FSEEKFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Void>, ffi.LongLong);
+typedef DartAILIA_USER_API_FSEEKFunction = int Function(
+    ffi.Pointer<ffi.Void>, int);
 
 /// \~japanese
 /// @brief ファイルの現在位置を取得します
@@ -3664,8 +3811,11 @@ typedef AILIA_USER_API_FSEEK = ffi.Pointer<
 /// @return
 /// This function returns the position, in bytes, the file pointer points to if successful.
 /// It returns -1 if it fails.
-typedef AILIA_USER_API_FTELL = ffi
-    .Pointer<ffi.NativeFunction<ffi.LongLong Function(ffi.Pointer<ffi.Void>)>>;
+typedef AILIA_USER_API_FTELL
+    = ffi.Pointer<ffi.NativeFunction<AILIA_USER_API_FTELLFunction>>;
+typedef AILIA_USER_API_FTELLFunction = ffi.LongLong Function(
+    ffi.Pointer<ffi.Void>);
+typedef DartAILIA_USER_API_FTELLFunction = int Function(ffi.Pointer<ffi.Void>);
 
 /// \~japanese
 /// @brief ファイルからデータを読み込みます
@@ -3686,10 +3836,12 @@ typedef AILIA_USER_API_FTELL = ffi
 /// This function returns  \ref AILIA_USER_API_SUCCESS  if successful.
 /// It returns  \ref AILIA_USER_API_FAILED  if it fails.
 /// Note that unlike the standard API, the return value will be AILIA_USER_API_*.
-typedef AILIA_USER_API_FREAD = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<ffi.Void>, ffi.LongLong, ffi.Pointer<ffi.Void>)>>;
+typedef AILIA_USER_API_FREAD
+    = ffi.Pointer<ffi.NativeFunction<AILIA_USER_API_FREADFunction>>;
+typedef AILIA_USER_API_FREADFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Void>, ffi.LongLong, ffi.Pointer<ffi.Void>);
+typedef DartAILIA_USER_API_FREADFunction = int Function(
+    ffi.Pointer<ffi.Void>, int, ffi.Pointer<ffi.Void>);
 
 /// \~japanese
 /// @brief ファイルのサイズを取得します
@@ -3704,8 +3856,11 @@ typedef AILIA_USER_API_FREAD = ffi.Pointer<
 /// @return
 /// This function returns the size of the file in bytes if successful.
 /// It returns -1 if it fails.
-typedef AILIA_USER_API_FSIZE = ffi
-    .Pointer<ffi.NativeFunction<ffi.LongLong Function(ffi.Pointer<ffi.Void>)>>;
+typedef AILIA_USER_API_FSIZE
+    = ffi.Pointer<ffi.NativeFunction<AILIA_USER_API_FSIZEFunction>>;
+typedef AILIA_USER_API_FSIZEFunction = ffi.LongLong Function(
+    ffi.Pointer<ffi.Void>);
+typedef DartAILIA_USER_API_FSIZEFunction = int Function(ffi.Pointer<ffi.Void>);
 
 /// \~japanese
 /// @brief ファイルを閉じます
@@ -3721,7 +3876,9 @@ typedef AILIA_USER_API_FSIZE = ffi
 /// This function returns  \ref AILIA_USER_API_SUCCESS  if successful.
 /// It returns  \ref AILIA_USER_API_FAILED  if it fails.
 typedef AILIA_USER_API_FCLOSE
-    = ffi.Pointer<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Void>)>>;
+    = ffi.Pointer<ffi.NativeFunction<AILIA_USER_API_FCLOSEFunction>>;
+typedef AILIA_USER_API_FCLOSEFunction = ffi.Int Function(ffi.Pointer<ffi.Void>);
+typedef DartAILIA_USER_API_FCLOSEFunction = int Function(ffi.Pointer<ffi.Void>);
 
 /// ネットワークオブジェクトのインスタンス
 final class AILIANetwork extends ffi.Opaque {}
@@ -3898,142 +4055,257 @@ final class _AILIASpeechApiCallback extends ffi.Struct {
 }
 
 typedef AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_FRAME_LEN = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<ffi.Int>, ffi.Int, ffi.Int, ffi.Int, ffi.Int)>>;
+    ffi
+    .NativeFunction<AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_FRAME_LENFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_FRAME_LENFunction = ffi.Int
+    Function(ffi.Pointer<ffi.Int>, ffi.Int, ffi.Int, ffi.Int, ffi.Int);
+typedef DartAILIA_SPEECH_USER_API_AILIA_AUDIO_GET_FRAME_LENFunction = int
+    Function(ffi.Pointer<ffi.Int>, int, int, int, int);
 typedef AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_MEL_SPECTROGRAM = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<ffi.Void>,
-            ffi.Pointer<ffi.Void>,
-            ffi.Int,
-            ffi.Int,
-            ffi.Int,
-            ffi.Int,
-            ffi.Int,
-            ffi.Int,
-            ffi.Int,
-            ffi.Int,
-            ffi.Float,
-            ffi.Int,
-            ffi.Float,
-            ffi.Float,
-            ffi.Int,
-            ffi.Int,
-            ffi.Int)>>;
+        AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_MEL_SPECTROGRAMFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_MEL_SPECTROGRAMFunction
+    = ffi.Int Function(
+        ffi.Pointer<ffi.Void>,
+        ffi.Pointer<ffi.Void>,
+        ffi.Int,
+        ffi.Int,
+        ffi.Int,
+        ffi.Int,
+        ffi.Int,
+        ffi.Int,
+        ffi.Int,
+        ffi.Int,
+        ffi.Float,
+        ffi.Int,
+        ffi.Float,
+        ffi.Float,
+        ffi.Int,
+        ffi.Int,
+        ffi.Int);
+typedef DartAILIA_SPEECH_USER_API_AILIA_AUDIO_GET_MEL_SPECTROGRAMFunction
+    = int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>, int, int, int,
+        int, int, int, int, int, double, int, double, double, int, int, int);
 typedef AILIA_SPEECH_USER_API_AILIA_AUDIO_RESAMPLE = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>, ffi.Int,
-            ffi.Int, ffi.Int, ffi.Int)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_AUDIO_RESAMPLEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_AUDIO_RESAMPLEFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Void>,
+    ffi.Pointer<ffi.Void>,
+    ffi.Int,
+    ffi.Int,
+    ffi.Int,
+    ffi.Int);
+typedef DartAILIA_SPEECH_USER_API_AILIA_AUDIO_RESAMPLEFunction = int Function(
+    ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>, int, int, int, int);
 typedef AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_RESAMPLE_LEN = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<ffi.Int>, ffi.Int, ffi.Int, ffi.Int)>>;
+        AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_RESAMPLE_LENFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_AUDIO_GET_RESAMPLE_LENFunction = ffi.Int
+    Function(ffi.Pointer<ffi.Int>, ffi.Int, ffi.Int, ffi.Int);
+typedef DartAILIA_SPEECH_USER_API_AILIA_AUDIO_GET_RESAMPLE_LENFunction = int
+    Function(ffi.Pointer<ffi.Int>, int, int, int);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_CREATE = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<ffi.Pointer<AILIATokenizer>>, ffi.Int, ffi.Int)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_TOKENIZER_CREATEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_CREATEFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<AILIATokenizer>>, ffi.Int, ffi.Int);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_CREATEFunction = int Function(
+    ffi.Pointer<ffi.Pointer<AILIATokenizer>>, int, int);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_OPEN_MODEL_FILE_A = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>)>>;
+        AILIA_SPEECH_USER_API_AILIA_TOKENIZER_OPEN_MODEL_FILE_AFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_OPEN_MODEL_FILE_AFunction
+    = ffi.Int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_OPEN_MODEL_FILE_AFunction
+    = int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_OPEN_MODEL_FILE_W = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.WChar>)>>;
+        AILIA_SPEECH_USER_API_AILIA_TOKENIZER_OPEN_MODEL_FILE_WFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_OPEN_MODEL_FILE_WFunction
+    = ffi.Int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.WChar>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_OPEN_MODEL_FILE_WFunction
+    = int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.WChar>);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_ENCODE = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_TOKENIZER_ENCODEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_ENCODEFunction = ffi.Int Function(
+    ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_ENCODEFunction = int Function(
+    ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TOKEN_COUNT = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.UnsignedInt>)>>;
+        AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TOKEN_COUNTFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TOKEN_COUNTFunction = ffi.Int
+    Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.UnsignedInt>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TOKEN_COUNTFunction = int
+    Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.UnsignedInt>);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TOKENS = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Int>,
-            ffi.UnsignedInt)>>;
+    ffi
+    .NativeFunction<AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TOKENSFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TOKENSFunction
+    = ffi.Int Function(
+        ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Int>, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TOKENSFunction = int
+    Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Int>, int);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_DECODE = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Int>,
-            ffi.UnsignedInt)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_TOKENIZER_DECODEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_DECODEFunction = ffi.Int Function(
+    ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Int>, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_DECODEFunction = int Function(
+    ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Int>, int);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TEXT_LENGTH = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.UnsignedInt>)>>;
+        AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TEXT_LENGTHFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TEXT_LENGTHFunction = ffi.Int
+    Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.UnsignedInt>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TEXT_LENGTHFunction = int
+    Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.UnsignedInt>);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TEXT = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>,
-            ffi.UnsignedInt)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TEXTFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TEXTFunction
+    = ffi.Int Function(
+        ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_GET_TEXTFunction = int
+    Function(ffi.Pointer<AILIATokenizer>, ffi.Pointer<ffi.Char>, int);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_DESTROY = ffi.Pointer<
-    ffi.NativeFunction<ffi.Void Function(ffi.Pointer<AILIATokenizer>)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_TOKENIZER_DESTROYFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_DESTROYFunction = ffi.Void
+    Function(ffi.Pointer<AILIATokenizer>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_DESTROYFunction = void
+    Function(ffi.Pointer<AILIATokenizer>);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_UTF8_TO_UTF32 = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<ffi.UnsignedInt>,
-            ffi.Pointer<ffi.UnsignedInt>,
-            ffi.Pointer<ffi.Char>,
-            ffi.UnsignedInt)>>;
+        AILIA_SPEECH_USER_API_AILIA_TOKENIZER_UTF8_TO_UTF32Function>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_UTF8_TO_UTF32Function
+    = ffi.Int Function(ffi.Pointer<ffi.UnsignedInt>,
+        ffi.Pointer<ffi.UnsignedInt>, ffi.Pointer<ffi.Char>, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_UTF8_TO_UTF32Function
+    = int Function(ffi.Pointer<ffi.UnsignedInt>, ffi.Pointer<ffi.UnsignedInt>,
+        ffi.Pointer<ffi.Char>, int);
 typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_UTF32_TO_UTF8 = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.UnsignedInt>,
-            ffi.UnsignedInt)>>;
-typedef AILIA_SPEECH_USER_API_AILIA_CREATE = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<ffi.Pointer<AILIANetwork>>, ffi.Int, ffi.Int)>>;
+        AILIA_SPEECH_USER_API_AILIA_TOKENIZER_UTF32_TO_UTF8Function>>;
+typedef AILIA_SPEECH_USER_API_AILIA_TOKENIZER_UTF32_TO_UTF8Function
+    = ffi.Int Function(
+        ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.UnsignedInt>, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_TOKENIZER_UTF32_TO_UTF8Function = int
+    Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.UnsignedInt>, int);
+typedef AILIA_SPEECH_USER_API_AILIA_CREATE = ffi
+    .Pointer<ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_CREATEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_CREATEFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<AILIANetwork>>, ffi.Int, ffi.Int);
+typedef DartAILIA_SPEECH_USER_API_AILIA_CREATEFunction = int Function(
+    ffi.Pointer<ffi.Pointer<AILIANetwork>>, int, int);
 typedef AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_FILE_A = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Char>)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_FILE_AFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_FILE_AFunction = ffi.Int
+    Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Char>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_FILE_AFunction = int
+    Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Char>);
 typedef AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_FILE_W = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.WChar>)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_FILE_WFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_FILE_WFunction = ffi.Int
+    Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.WChar>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_FILE_WFunction = int
+    Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.WChar>);
 typedef AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_MEM = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Void>,
-            ffi.UnsignedInt)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_MEMFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_MEMFunction = ffi.Int Function(
+    ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Void>, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_OPEN_WEIGHT_MEMFunction = int Function(
+    ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Void>, int);
 typedef AILIA_SPEECH_USER_API_AILIA_SET_MEMORY_MODE = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.UnsignedInt)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_SET_MEMORY_MODEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_SET_MEMORY_MODEFunction = ffi.Int Function(
+    ffi.Pointer<AILIANetwork>, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_SET_MEMORY_MODEFunction = int Function(
+    ffi.Pointer<AILIANetwork>, int);
 typedef AILIA_SPEECH_USER_API_AILIA_DESTROY = ffi
-    .Pointer<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<AILIANetwork>)>>;
+    .Pointer<ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_DESTROYFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_DESTROYFunction = ffi.Void Function(
+    ffi.Pointer<AILIANetwork>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_DESTROYFunction = void Function(
+    ffi.Pointer<AILIANetwork>);
 typedef AILIA_SPEECH_USER_API_AILIA_UPDATE = ffi
-    .Pointer<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<AILIANetwork>)>>;
+    .Pointer<ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_UPDATEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_UPDATEFunction = ffi.Int Function(
+    ffi.Pointer<AILIANetwork>);
+typedef DartAILIA_SPEECH_USER_API_AILIA_UPDATEFunction = int Function(
+    ffi.Pointer<AILIANetwork>);
 typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_INPUT_INDEX = ffi.Pointer<
     ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>,
-            ffi.Pointer<ffi.UnsignedInt>, ffi.UnsignedInt)>>;
-typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_OUTPUT_INDEX = ffi
-    .Pointer<
-        ffi.NativeFunction<
-            ffi.Int Function(ffi.Pointer<AILIANetwork>,
-                ffi.Pointer<ffi.UnsignedInt>, ffi.UnsignedInt)>>;
+        AILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_INPUT_INDEXFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_INPUT_INDEXFunction
+    = ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.UnsignedInt>,
+        ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_INPUT_INDEXFunction
+    = int Function(
+        ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.UnsignedInt>, int);
+typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_OUTPUT_INDEX = ffi.Pointer<
+    ffi.NativeFunction<
+        AILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_OUTPUT_INDEXFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_OUTPUT_INDEXFunction
+    = ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.UnsignedInt>,
+        ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_GET_BLOB_INDEX_BY_OUTPUT_INDEXFunction
+    = int Function(
+        ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.UnsignedInt>, int);
 typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_DATA = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Void>,
-            ffi.UnsignedInt, ffi.UnsignedInt)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_GET_BLOB_DATAFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_DATAFunction = ffi.Int Function(
+    ffi.Pointer<AILIANetwork>,
+    ffi.Pointer<ffi.Void>,
+    ffi.UnsignedInt,
+    ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_GET_BLOB_DATAFunction = int Function(
+    ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Void>, int, int);
 typedef AILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_DATA = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Void>,
-            ffi.UnsignedInt, ffi.UnsignedInt)>>;
-typedef AILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_SHAPE = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<AILIAShape>,
-            ffi.UnsignedInt, ffi.UnsignedInt)>>;
-typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_SHAPE = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<AILIAShape>,
-            ffi.UnsignedInt, ffi.UnsignedInt)>>;
-typedef AILIA_SPEECH_USER_API_AILIA_GET_ERROR_DETAIL = ffi.Pointer<
     ffi
-    .NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<AILIANetwork>)>>;
+    .NativeFunction<AILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_DATAFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_DATAFunction
+    = ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Void>,
+        ffi.UnsignedInt, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_DATAFunction = int
+    Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<ffi.Void>, int, int);
+typedef AILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_SHAPE = ffi.Pointer<
+    ffi
+    .NativeFunction<AILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_SHAPEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_SHAPEFunction
+    = ffi.Int Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<AILIAShape>,
+        ffi.UnsignedInt, ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_SET_INPUT_BLOB_SHAPEFunction = int
+    Function(ffi.Pointer<AILIANetwork>, ffi.Pointer<AILIAShape>, int, int);
+typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_SHAPE = ffi.Pointer<
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_GET_BLOB_SHAPEFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_GET_BLOB_SHAPEFunction = ffi.Int Function(
+    ffi.Pointer<AILIANetwork>,
+    ffi.Pointer<AILIAShape>,
+    ffi.UnsignedInt,
+    ffi.UnsignedInt);
+typedef DartAILIA_SPEECH_USER_API_AILIA_GET_BLOB_SHAPEFunction = int Function(
+    ffi.Pointer<AILIANetwork>, ffi.Pointer<AILIAShape>, int, int);
+typedef AILIA_SPEECH_USER_API_AILIA_GET_ERROR_DETAIL = ffi.Pointer<
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_GET_ERROR_DETAILFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_GET_ERROR_DETAILFunction
+    = ffi.Pointer<ffi.Char> Function(ffi.Pointer<AILIANetwork>);
 typedef AILIA_SPEECH_USER_API_AILIA_COPY_BLOB_DATA = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<AILIANetwork> dst_net,
-            ffi.UnsignedInt dst_blob_idx,
-            ffi.Pointer<AILIANetwork> src_net,
-            ffi.UnsignedInt src_blob_idx)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_COPY_BLOB_DATAFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_COPY_BLOB_DATAFunction = ffi.Int Function(
+    ffi.Pointer<AILIANetwork> dst_net,
+    ffi.UnsignedInt dst_blob_idx,
+    ffi.Pointer<AILIANetwork> src_net,
+    ffi.UnsignedInt src_blob_idx);
+typedef DartAILIA_SPEECH_USER_API_AILIA_COPY_BLOB_DATAFunction = int Function(
+    ffi.Pointer<AILIANetwork> dst_net,
+    int dst_blob_idx,
+    ffi.Pointer<AILIANetwork> src_net,
+    int src_blob_idx);
 typedef AILIA_SPEECH_USER_API_AILIA_GET_ENVIRONMENT = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(ffi.Pointer<ffi.Pointer<AILIAEnvironment>> env,
-            ffi.UnsignedInt env_idx, ffi.UnsignedInt version)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_AILIA_GET_ENVIRONMENTFunction>>;
+typedef AILIA_SPEECH_USER_API_AILIA_GET_ENVIRONMENTFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<AILIAEnvironment>> env,
+    ffi.UnsignedInt env_idx,
+    ffi.UnsignedInt version);
+typedef DartAILIA_SPEECH_USER_API_AILIA_GET_ENVIRONMENTFunction = int Function(
+    ffi.Pointer<ffi.Pointer<AILIAEnvironment>> env, int env_idx, int version);
 
 /// ネットワークオブジェクトのインスタンス
 final class AILIASpeech extends ffi.Opaque {}
@@ -4048,7 +4320,7 @@ final class _AILIASpeechText extends ffi.Struct {
   external double time_stamp_end;
 
   @ffi.UnsignedInt()
-  external int person_id;
+  external int speaker_id;
 
   external ffi.Pointer<ffi.Char> language;
 
@@ -4072,16 +4344,20 @@ typedef AILIASpeechApiCallback = _AILIASpeechApiCallback;
 /// @return
 /// Return 0 to continue, non-zero to abort inference.
 typedef AILIA_SPEECH_USER_API_INTERMEDIATE_CALLBACK = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Int Function(
-            ffi.Pointer<ffi.Void> handle, ffi.Pointer<ffi.Char> text)>>;
+    ffi.NativeFunction<AILIA_SPEECH_USER_API_INTERMEDIATE_CALLBACKFunction>>;
+typedef AILIA_SPEECH_USER_API_INTERMEDIATE_CALLBACKFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Void> handle, ffi.Pointer<ffi.Char> text);
+typedef DartAILIA_SPEECH_USER_API_INTERMEDIATE_CALLBACKFunction = int Function(
+    ffi.Pointer<ffi.Void> handle, ffi.Pointer<ffi.Char> text);
 typedef AILIASpeechText = _AILIASpeechText;
 
-const int __DARWIN_ONLY_64_BIT_INO_T = 0;
+const int __has_safe_buffers = 1;
+
+const int __DARWIN_ONLY_64_BIT_INO_T = 1;
 
 const int __DARWIN_ONLY_UNIX_CONFORMANCE = 1;
 
-const int __DARWIN_ONLY_VERS_1050 = 0;
+const int __DARWIN_ONLY_VERS_1050 = 1;
 
 const int __DARWIN_UNIX03 = 1;
 
@@ -4090,10 +4366,6 @@ const int __DARWIN_64_BIT_INO_T = 1;
 const int __DARWIN_VERS_1050 = 1;
 
 const int __DARWIN_NON_CANCELABLE = 0;
-
-const String __DARWIN_SUF_64_BIT_INO_T = '\$INODE64';
-
-const String __DARWIN_SUF_1050 = '\$1050';
 
 const String __DARWIN_SUF_EXTSN = '\$DARWIN_EXTSN';
 
@@ -4108,6 +4380,10 @@ const int __STDC_WANT_LIB_EXT1__ = 1;
 const int __DARWIN_NO_LONG_LONG = 0;
 
 const int _DARWIN_FEATURE_64_BIT_INODE = 1;
+
+const int _DARWIN_FEATURE_ONLY_64_BIT_INODE = 1;
+
+const int _DARWIN_FEATURE_ONLY_VERS_1050 = 1;
 
 const int _DARWIN_FEATURE_ONLY_UNIX_CONFORMANCE = 1;
 
@@ -4293,6 +4569,12 @@ const int AILIA_TOKENIZER_TYPE_BERT_JAPANESE_CHARACTER = 5;
 
 const int AILIA_TOKENIZER_TYPE_T5 = 6;
 
+const int AILIA_TOKENIZER_TYPE_ROBERTA = 7;
+
+const int AILIA_TOKENIZER_TYPE_BERT_UNCASED = 8;
+
+const int AILIA_TOKENIZER_TYPE_BERT_CASED = 9;
+
 const int AILIA_TOKENIZER_FLAG_NONE = 0;
 
 const int AILIA_TOKENIZER_FLAG_UTF8_SAFE = 1;
@@ -4323,6 +4605,8 @@ const int AILIA_SPEECH_FLAG_LIVE = 1;
 
 const int AILIA_SPEECH_VAD_TYPE_SILERO = 0;
 
+const int AILIA_SPEECH_DIARIZATION_TYPE_PYANNOTE_AUDIO = 0;
+
 const int AILIA_SPEECH_DICTIONARY_TYPE_REPLACE = 0;
 
 const int AILIA_SPEECH_POST_PROCESS_TYPE_T5 = 0;
@@ -4334,3 +4618,5 @@ const int AILIA_SPEECH_POST_PROCESS_TYPE_FUGUMT_JA_EN = 2;
 const int AILIA_SPEECH_API_CALLBACK_VERSION = 6;
 
 const int AILIA_SPEECH_TEXT_VERSION = 2;
+
+const int AILIA_SPEECH_SPEAKER_ID_UNKNOWN = 4294967295;

@@ -92,7 +92,7 @@ class SpeechText {
     String s = p.toDartString();
     return SpeechText(
       s,
-      text.ref.person_id,
+      text.ref.speaker_id,
       text.ref.confidence,
       text.ref.time_stamp_begin,
       text.ref.time_stamp_end,
@@ -600,6 +600,34 @@ class AiliaSpeechModel {
     postProcess = true;
   }
 
+  // 話者分離のモデルを開く
+  void diarization(
+    File segmentation,
+    File embedding,
+    {
+      int diarizationType = ailia_speech_dart.AILIA_SPEECH_DIARIZATION_TYPE_PYANNOTE_AUDIO
+    }
+    ) {
+    int status = 0;
+    if (Platform.isWindows) {
+      status = ailiaSpeech.ailiaSpeechOpenDiarizationFileW(
+        ppAilia!.value,
+        segmentation.path.toNativeUtf16().cast<ffi.Int16>(),
+        embedding.path.toNativeUtf16().cast<ffi.Int16>(),
+        diarizationType,
+      );
+      throwError("ailiaSpeechOpenDiarizationFileW", status);
+    }else{
+      status = ailiaSpeech.ailiaSpeechOpenDiarizationFileA(
+        ppAilia!.value,
+        segmentation.path.toNativeUtf8().cast<ffi.Int8>(),
+        embedding.path.toNativeUtf8().cast<ffi.Int8>(),
+        diarizationType,
+      );
+      throwError("ailiaSpeechOpenDiarizationFileA", status);
+    }
+  }
+
   // 辞書を開く
   void dictionary(
     File dictionary,
@@ -772,7 +800,7 @@ class AiliaSpeechModel {
     inputTextStruct.ref.text = inputText.toNativeUtf8().cast<ffi.Char>();
     inputTextStruct.ref.time_stamp_begin = 0.0;
     inputTextStruct.ref.time_stamp_end = 0.0;
-    inputTextStruct.ref.person_id = 0;
+    inputTextStruct.ref.speaker_id = 0;
     inputTextStruct.ref.language = language.toNativeUtf8().cast<ffi.Char>();
 
     int status = ailiaSpeech.ailiaSpeechSetText(
