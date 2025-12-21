@@ -65,9 +65,23 @@ class _MyAppState extends State<MyApp> {
     // Load dict if you want to use word replace
     File dict = await copyFileFromAssets("dict.csv");
 
+    // Model Selection
+    String remotePath = "https://storage.googleapis.com/ailia-models/whisper/";
+    String encoderModelPath = "encoder_tiny.opt3.onnx";
+    String decoderModelPath = "decoder_tiny_fix_kv_cache.opt3.onnx";
+    int modelType = ailia_speech_dart.AILIA_SPEECH_MODEL_TYPE_WHISPER_MULTILINGUAL_TINY;
+
+    bool sensevoice = true;
+    if (sensevoice) {
+      remotePath = "https://storage.googleapis.com/ailia-models/sensevoice/";
+      encoderModelPath = "sensevoice_small.onnx";
+      decoderModelPath = "sensevoice_small.model";
+      modelType = ailia_speech_dart.AILIA_SPEECH_MODEL_TYPE_SENSEVOICE_SMALL;
+    }
+
     print("Downloading model...");
-    downloadModel("https://storage.googleapis.com/ailia-models/whisper/encoder_tiny.opt3.onnx", "encoder_tiny.opt3.onnx", progressCallback, (onnx_encoder_file) {
-      downloadModel("https://storage.googleapis.com/ailia-models/whisper/decoder_tiny_fix_kv_cache.opt3.onnx", "decoder_tiny_fix_kv_cache.opt3.onnx", progressCallback, (onnx_decoder_file) {
+    downloadModel(remotePath + encoderModelPath, encoderModelPath, progressCallback, (onnx_encoder_file) {
+      downloadModel(remotePath + decoderModelPath, decoderModelPath, progressCallback, (onnx_decoder_file) {
         downloadModel("https://storage.googleapis.com/ailia-models/silero-vad/silero_vad.onnx", "silero_vad.onnx", progressCallback, (onnx_vad_file) {
           downloadModel("https://storage.googleapis.com/ailia-models/pyannote-audio/segmentation.onnx", "segmentation.onnx", progressCallback, (onnx_segmentation_file) {
             downloadModel("https://storage.googleapis.com/ailia-models/pyannote-audio/speaker-embedding.onnx", "speaker-embedding.onnx", progressCallback, (onnx_embedding_gile) {
@@ -75,7 +89,7 @@ class _MyAppState extends State<MyApp> {
 
               _ailiaSpeechModel.create(false, false, ailia_speech_dart.AILIA_ENVIRONMENT_ID_AUTO);
               // onnx_vad_file is optional
-              _ailiaSpeechModel.open(onnx_encoder_file, onnx_decoder_file, onnx_vad_file, "auto", ailia_speech_dart.AILIA_SPEECH_MODEL_TYPE_WHISPER_MULTILINGUAL_TINY);
+              _ailiaSpeechModel.open(onnx_encoder_file, onnx_decoder_file, onnx_vad_file, "auto", modelType);
               _ailiaSpeechModel.diarization(onnx_segmentation_file, onnx_embedding_gile); // optional
               _ailiaSpeechModel.dictionary(dict); // optional
 
